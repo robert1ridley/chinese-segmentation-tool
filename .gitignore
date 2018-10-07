@@ -1,0 +1,14 @@
+# DS Store
+.DS_Store
+
+# pycache
+__pycache__/
+
+# virtualenv
+virtual-environmen/
+
+# pyc
+*.pyc
+
+# VsCode Settings
+.vscode
