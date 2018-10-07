@@ -67,8 +67,7 @@ def main():
   # FMM
   fmm_dictionary_matches = []
   fmm_word_to_check_in_dictionary = user_sentence
-  parse_error = False
-  while not fmm_word_to_check_in_dictionary == '' and not parse_error:
+  while fmm_word_to_check_in_dictionary:
     word = fmm_greedy_check(fmm_word_to_check_in_dictionary, word_dictionary)
     fmm_dictionary_matches.append(word)
     fmm_word_to_check_in_dictionary = remove_first_word(word, fmm_word_to_check_in_dictionary)
@@ -78,8 +77,7 @@ def main():
   # RMM
   rmm_dictionary_matches = []
   rmm_word_to_check_in_dictionary = user_sentence
-  parse_error = False
-  while not rmm_word_to_check_in_dictionary == '' and not parse_error:
+  while rmm_word_to_check_in_dictionary:
     word = rmm_greedy_check(rmm_word_to_check_in_dictionary, word_dictionary)
     rmm_dictionary_matches.append(word)
     rmm_word_to_check_in_dictionary = remove_last_word(word, rmm_word_to_check_in_dictionary)
