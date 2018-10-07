@@ -1,4 +1,5 @@
 import sys
+import models
 
 def createDictionary(filename):
   word_dict = {}
@@ -58,7 +59,17 @@ def rmm_greedy_check(term, word_dictionary):
     is_dictionary_match = True
   return word_to_check_in_dictionary
 
+def do_fmm_rmm_match(fmm_list, rmm_list):
+  fmm_list = set(fmm_list)
+  rmm_list = set(rmm_list)
+  non_matches = fmm_list.symmetric_difference(rmm_list)
+  print (len(non_matches))
+  if non_matches:
+    return False, non_matches
+  return True, non_matches
+
 def main():
+  corpus = models.Corpus('./data/PH_corpus.segmented')
   word_dictionary = createDictionary("./data/dic-ce.txt")
   user_sentence = input("\nEnter a Chinese sentence (enter '1' to exit program): \n")
   if user_sentence == '1':
@@ -84,6 +95,11 @@ def main():
   reversed_rmm_dictionary_matches = rmm_dictionary_matches[::-1]
   split_words = "/".join(reversed_rmm_dictionary_matches)
   print ("RMM: " + split_words)
+
+  if not fmm_dictionary_matches == reversed_rmm_dictionary_matches:
+    fmm_and_rmm_match, non_matches_set = do_fmm_rmm_match(fmm_dictionary_matches, reversed_rmm_dictionary_matches)
+    for non_match in non_matches_set:
+      print (non_match + ": " + str(corpus.text.count(non_match)))
 
 if __name__ == "__main__":
   while True:
