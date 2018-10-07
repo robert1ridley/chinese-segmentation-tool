@@ -33,7 +33,7 @@ def remove_last_word(term_to_remove, full_string):
 def fmm_greedy_check(term, word_dictionary):
   word_to_check_in_dictionary = term
   is_dictionary_match = False
-  while not is_dictionary_match and not word_to_check_in_dictionary == '':
+  while not is_dictionary_match and word_to_check_in_dictionary:
     is_dictionary_match = is_word_in_dictionary(word_to_check_in_dictionary, word_dictionary)
     if not is_dictionary_match:
       word_to_check_in_dictionary = remove_last_char(word_to_check_in_dictionary)
@@ -47,7 +47,7 @@ def fmm_greedy_check(term, word_dictionary):
 def rmm_greedy_check(term, word_dictionary):
   word_to_check_in_dictionary = term
   is_dictionary_match = False
-  while not is_dictionary_match and not word_to_check_in_dictionary == '':
+  while not is_dictionary_match and word_to_check_in_dictionary:
     is_dictionary_match = is_word_in_dictionary(word_to_check_in_dictionary, word_dictionary)
     if not is_dictionary_match:
       word_to_check_in_dictionary = remove_first_char(word_to_check_in_dictionary)
