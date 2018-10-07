@@ -37,7 +37,12 @@ def fmm_greedy_check(term, word_dictionary):
     is_dictionary_match = is_word_in_dictionary(word_to_check_in_dictionary, word_dictionary)
     if not is_dictionary_match:
       word_to_check_in_dictionary = remove_last_char(word_to_check_in_dictionary)
-  return is_dictionary_match, word_to_check_in_dictionary
+  
+  # Choose single char as a match if there is no match in the dictionary
+  if not is_dictionary_match:
+    word_to_check_in_dictionary = term[0]
+    is_dictionary_match = True
+  return word_to_check_in_dictionary
 
 def rmm_greedy_check(term, word_dictionary):
   word_to_check_in_dictionary = term
@@ -46,7 +51,12 @@ def rmm_greedy_check(term, word_dictionary):
     is_dictionary_match = is_word_in_dictionary(word_to_check_in_dictionary, word_dictionary)
     if not is_dictionary_match:
       word_to_check_in_dictionary = remove_first_char(word_to_check_in_dictionary)
-  return is_dictionary_match, word_to_check_in_dictionary
+
+  # Choose single char as a match if there is no match in the dictionary
+  if not is_dictionary_match:
+    word_to_check_in_dictionary = term[-1]
+    is_dictionary_match = True
+  return word_to_check_in_dictionary
 
 def main():
   word_dictionary = createDictionary("./data/dic-ce.txt")
@@ -59,13 +69,9 @@ def main():
   fmm_word_to_check_in_dictionary = user_sentence
   parse_error = False
   while not fmm_word_to_check_in_dictionary == '' and not parse_error:
-    match, word = fmm_greedy_check(fmm_word_to_check_in_dictionary, word_dictionary)
-    if match:
-      fmm_dictionary_matches.append(word)
-      fmm_word_to_check_in_dictionary = remove_first_word(word, fmm_word_to_check_in_dictionary)
-    else:
-      print ("There was an error parsing the sentence.")
-      parse_error = True
+    word = fmm_greedy_check(fmm_word_to_check_in_dictionary, word_dictionary)
+    fmm_dictionary_matches.append(word)
+    fmm_word_to_check_in_dictionary = remove_first_word(word, fmm_word_to_check_in_dictionary)
   split_words = "/".join(fmm_dictionary_matches)
   print ("FMM: " + split_words)
 
@@ -74,13 +80,9 @@ def main():
   rmm_word_to_check_in_dictionary = user_sentence
   parse_error = False
   while not rmm_word_to_check_in_dictionary == '' and not parse_error:
-    match, word = rmm_greedy_check(rmm_word_to_check_in_dictionary, word_dictionary)
-    if match:
-      rmm_dictionary_matches.append(word)
-      rmm_word_to_check_in_dictionary = remove_last_word(word, rmm_word_to_check_in_dictionary)
-    else:
-      print ("There was an error parsing the sentence.")
-      parse_error = True
+    word = rmm_greedy_check(rmm_word_to_check_in_dictionary, word_dictionary)
+    rmm_dictionary_matches.append(word)
+    rmm_word_to_check_in_dictionary = remove_last_word(word, rmm_word_to_check_in_dictionary)
   reversed_rmm_dictionary_matches = rmm_dictionary_matches[::-1]
   split_words = "/".join(reversed_rmm_dictionary_matches)
   print ("RMM: " + split_words)
