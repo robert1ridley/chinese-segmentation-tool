@@ -12,3 +12,6 @@ virtual-environmen/
 
 # VsCode Settings
 .vscode
+
+# Pycharm env
+.idea/

@@ -1,6 +1,7 @@
 import sys
 import models
 
+
 def createDictionary(filename):
   word_dict = {}
   dataFile = open(filename, "r", encoding='utf-8')
@@ -9,27 +10,33 @@ def createDictionary(filename):
     word_dict[row[0]] = row[0]
   return word_dict
 
+
 def is_word_in_dictionary(word, chinese_dictionary):
   dictSearch = chinese_dictionary.get(word, False)
   if dictSearch:
     return True
   return False
 
+
 def remove_last_char(word):
   word_with_final_char_removed = word[:-1]
   return word_with_final_char_removed
+
 
 def remove_first_char(word):
   word_with_first_char_removed = word[1:]
   return word_with_first_char_removed
 
+
 def remove_first_word(term_to_remove, full_string):
   full_string = full_string[len(term_to_remove):]
   return full_string
 
+
 def remove_last_word(term_to_remove, full_string):
   full_string = full_string[:-len(term_to_remove)]
   return full_string
+
 
 def fmm_greedy_check(term, word_dictionary):
   word_to_check_in_dictionary = term
@@ -45,6 +52,7 @@ def fmm_greedy_check(term, word_dictionary):
     is_dictionary_match = True
   return word_to_check_in_dictionary
 
+
 def rmm_greedy_check(term, word_dictionary):
   word_to_check_in_dictionary = term
   is_dictionary_match = False
@@ -59,23 +67,59 @@ def rmm_greedy_check(term, word_dictionary):
     is_dictionary_match = True
   return word_to_check_in_dictionary
 
-def do_fmm_rmm_match(fmm_list, rmm_list):
-  fmm_list = set(fmm_list)
-  rmm_list = set(rmm_list)
-  non_matches = fmm_list.symmetric_difference(rmm_list)
-  print (len(non_matches))
-  if non_matches:
-    return False, non_matches
-  return True, non_matches
+
+def vote_fmm_rmm(fmm_list, rmm_list):
+  corpus = models.Corpus('./data/PH_corpus.segmented')
+  fmm_counts = {
+    'not_in_dict': 0,
+    'single_character_words': 0
+  }
+  rmm_counts = {
+    'not_in_dict': 0,
+    'single_character_words': 0
+  }
+
+  for term in fmm_list:
+    if len(term) == 1:
+      fmm_counts['single_character_words'] += 1
+    elif corpus.text.count(term) == 0:
+      fmm_counts['not_in_dict'] += 1
+  print(fmm_counts)
+
+  for term in rmm_list:
+    if len(term) == 1:
+      rmm_counts['single_character_words'] += 1
+    elif corpus.text.count(term) == 0:
+      rmm_counts['not_in_dict'] += 1
+  print(rmm_counts)
+
+  # Check whether one result has more words not in the corpus
+  if fmm_counts['not_in_dict'] != rmm_counts['not_in_dict']:
+    if fmm_counts['not_in_dict'] < rmm_counts['not_in_dict']:
+      return fmm_list
+    else:
+      return rmm_list
+
+  # Check whether one result has more single character words
+  elif fmm_counts['single_character_words'] != rmm_counts['single_character_words']:
+    if fmm_counts['single_character_words'] < rmm_counts['single_character_words']:
+      return fmm_list
+    else:
+      return rmm_list
+
+  else:
+    return rmm_list
+
 
 def main():
-  corpus = models.Corpus('./data/PH_corpus.segmented')
+  # corpus = models.Corpus('./data/PH_corpus.segmented')
   word_dictionary = createDictionary("./data/dic-ce.txt")
   user_sentence = input("\nEnter a Chinese sentence (enter '1' to exit program): \n")
   if user_sentence == '1':
     sys.exit()
   
   # FMM
+  print (user_sentence)
   fmm_dictionary_matches = []
   fmm_word_to_check_in_dictionary = user_sentence
   while fmm_word_to_check_in_dictionary:
@@ -97,9 +141,10 @@ def main():
   print ("RMM: " + split_words)
 
   if not fmm_dictionary_matches == reversed_rmm_dictionary_matches:
-    fmm_and_rmm_match, non_matches_set = do_fmm_rmm_match(fmm_dictionary_matches, reversed_rmm_dictionary_matches)
-    for non_match in non_matches_set:
-      print (non_match + ": " + str(corpus.text.count(non_match)))
+    decision = vote_fmm_rmm(fmm_dictionary_matches, reversed_rmm_dictionary_matches)
+    decision_split = "/".join(decision)
+    print("FINAL DECISION: " + decision_split)
+
 
 if __name__ == "__main__":
   while True:
