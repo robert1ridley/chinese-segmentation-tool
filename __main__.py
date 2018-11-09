@@ -66,49 +66,6 @@ def rmm_greedy_check(term, word_dictionary):
   return word_to_check_in_dictionary
 
 
-# def vote_fmm_rmm(fmm_list, rmm_list):
-#   corpus = models.Corpus('./data/PH_corpus.segmented')
-#   fmm_counts = {
-#     'not_in_dict': 0,
-#     'single_character_words': 0
-#   }
-#   rmm_counts = {
-#     'not_in_dict': 0,
-#     'single_character_words': 0
-#   }
-#
-#   for term in fmm_list:
-#     if len(term) == 1:
-#       fmm_counts['single_character_words'] += 1
-#     elif corpus.text.count(term) == 0:
-#       fmm_counts['not_in_dict'] += 1
-#   print(fmm_counts)
-#
-#   for term in rmm_list:
-#     if len(term) == 1:
-#       rmm_counts['single_character_words'] += 1
-#     elif corpus.text.count(term) == 0:
-#       rmm_counts['not_in_dict'] += 1
-#   print(rmm_counts)
-#
-#   # Check whether one result has more words not in the corpus
-#   if fmm_counts['not_in_dict'] != rmm_counts['not_in_dict']:
-#     if fmm_counts['not_in_dict'] < rmm_counts['not_in_dict']:
-#       return fmm_list
-#     else:
-#       return rmm_list
-#
-#   # Check whether one result has more single character words
-#   elif fmm_counts['single_character_words'] != rmm_counts['single_character_words']:
-#     if fmm_counts['single_character_words'] < rmm_counts['single_character_words']:
-#       return fmm_list
-#     else:
-#       return rmm_list
-#
-#   else:
-#     return rmm_list
-
-
 def vote_on_sentence(fmm_dictionary_matches, reversed_rmm_dictionary_matches):
   corpus = models.Corpus('./data/PH_corpus.segmented')
   corpus_text = corpus.text
@@ -158,11 +115,9 @@ def main():
   print ("RMM: " + split_words)
 
   if not fmm_dictionary_matches == reversed_rmm_dictionary_matches:
-    # decision = vote_fmm_rmm(fmm_dictionary_matches, reversed_rmm_dictionary_matches)
-    # decision_split = "/".join(decision)
-    # print("FINAL DECISION: " + decision_split)
     vote = vote_on_sentence(fmm_dictionary_matches, reversed_rmm_dictionary_matches)
     print("HEURISTICS VOTE: " + "/".join(vote))
+
 
 if __name__ == "__main__":
   while True:
