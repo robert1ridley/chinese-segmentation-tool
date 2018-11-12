@@ -22,6 +22,7 @@ def test_sentence_segmentation():
   total_sentences = 0
 
   lines = corpus_file.readlines()
+  print('Calculating ...')
   for line in lines:
     total_sentences += 1
     line = line.strip()
