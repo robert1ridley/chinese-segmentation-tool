@@ -1,13 +1,7 @@
 import helper_methods.dictionary_methods as dictionary_methods
 import helper_methods.segmenting_methods as segmenting_methods
 import models
-import jieba
 import re
-
-
-def jieba_segment(sentence):
-  seg = jieba.cut(sentence)
-  return '/'.join(seg)
 
 
 def test_sentence_segmentation():
@@ -18,11 +12,11 @@ def test_sentence_segmentation():
   fmm_match_count = 0
   rmm_match_count = 0
   vote_match_count = 0
-  total_words = 0
+  total_sentences = 0
 
   lines = corpus_file.readlines()
   for line in lines:
-    total_words += 1
+    total_sentences += 1
     line = line.strip()
     full_line = re.sub(' +', '', line)
     true_split = re.sub(' +', '/', line)
@@ -34,9 +28,9 @@ def test_sentence_segmentation():
     if true_split == vote:
       vote_match_count += 1
 
-  print("FMM Accuracy: " + str((fmm_match_count/total_words)*100) + "%")
-  print("RMM Accuracy: " + str((rmm_match_count / total_words) * 100) + "%")
-  print("Post-Cost Accuracy" + str((vote_match_count / total_words) * 100) + "%")
+  print("FMM Accuracy: " + str((fmm_match_count / total_sentences)*100) + "%")
+  print("RMM Accuracy: " + str((rmm_match_count / total_sentences) * 100) + "%")
+  print("Post-Cost-Calculation Accuracy: " + str((vote_match_count / total_sentences) * 100) + "%")
 
 
 test_sentence_segmentation()
