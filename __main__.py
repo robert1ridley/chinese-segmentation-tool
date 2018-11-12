@@ -40,6 +40,7 @@ def remove_last_word(term_to_remove, full_string):
   return full_string
 
 
+# 从左边查最大的单词匹配
 def fmm_greedy_check(term, word_dictionary):
   word_to_check_in_dictionary = term
   is_dictionary_match = False
@@ -53,6 +54,7 @@ def fmm_greedy_check(term, word_dictionary):
   return word_to_check_in_dictionary
 
 
+# 从右边查最大的单词匹配
 def rmm_greedy_check(term, word_dictionary):
   word_to_check_in_dictionary = term
   is_dictionary_match = False
@@ -72,6 +74,9 @@ def vote_on_sentence(fmm_dictionary_matches, reversed_rmm_dictionary_matches):
   corpus_word_count = corpus.word_count
   fmm_cost_list = []
   rmm_cost_list = []
+
+  # USE COST CALUCULATION TO WORK OUT WHETHER FMM OR RMM SPLIT HAS LOWEST COST
+  # I HAVE ADDED A SMALL CONSTANT (1*10^-15) IN CASE THE FREQUENCY IS 0. THIS WILL PREVENT LOG(0)
   constant = 1*(math.pow(10, -15))
   for word in fmm_dictionary_matches:
     word_freq = corpus_text.count(word) + constant
@@ -89,11 +94,11 @@ def vote_on_sentence(fmm_dictionary_matches, reversed_rmm_dictionary_matches):
 
 def main():
   word_dictionary = createDictionary("./data/dic-ce.txt")
-  user_sentence = input("\nEnter a Chinese sentence (enter '1' to exit program): \n")
+  user_sentence = input("\n输入一个汉语句子：\n")
   if user_sentence == '1':
     sys.exit()
   
-  # FMM
+  # FORWARD MAXIMUM MATCHING
   fmm_dictionary_matches = []
   fmm_word_to_check_in_dictionary = user_sentence
   while fmm_word_to_check_in_dictionary:
@@ -103,7 +108,7 @@ def main():
   split_words = "/".join(fmm_dictionary_matches)
   print ("FMM: " + split_words)
 
-  # RMM
+  # REVERSE MAXIMUM MATCHING
   rmm_dictionary_matches = []
   rmm_word_to_check_in_dictionary = user_sentence
   while rmm_word_to_check_in_dictionary:
@@ -114,9 +119,10 @@ def main():
   split_words = "/".join(reversed_rmm_dictionary_matches)
   print ("RMM: " + split_words)
 
+  # 如果FMM与RMM的结果不一样，句子有歧义。执行vote_on_sentence()函数，用smallest cost（最小代价）选FMM或RMM的接过。
   if not fmm_dictionary_matches == reversed_rmm_dictionary_matches:
     vote = vote_on_sentence(fmm_dictionary_matches, reversed_rmm_dictionary_matches)
-    print("HEURISTICS VOTE: " + "/".join(vote))
+    print("MINIMAL COST VOTE: " + "/".join(vote))
 
 
 if __name__ == "__main__":
