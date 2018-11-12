@@ -6,3 +6,4 @@ class Corpus (object):
     contents = infile.read()
     contents = re.sub(r'[^\w\s]','',contents)
     self.text = contents
+    self.word_count = len(contents.split('\n'))
