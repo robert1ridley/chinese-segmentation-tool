@@ -92,39 +92,44 @@ def vote_on_sentence(fmm_dictionary_matches, reversed_rmm_dictionary_matches):
     return reversed_rmm_dictionary_matches
 
 
-def main():
-  word_dictionary = createDictionary("./data/dic-ce.txt")
-  user_sentence = input("\n输入一个汉语句子：\n")
-  if user_sentence == '1':
-    sys.exit()
-  
+def segment_sentence(sentence, word_dictionary):
   # FORWARD MAXIMUM MATCHING
   fmm_dictionary_matches = []
-  fmm_word_to_check_in_dictionary = user_sentence
+  fmm_word_to_check_in_dictionary = sentence
   while fmm_word_to_check_in_dictionary:
     word = fmm_greedy_check(fmm_word_to_check_in_dictionary, word_dictionary)
     fmm_dictionary_matches.append(word)
     fmm_word_to_check_in_dictionary = remove_first_word(word, fmm_word_to_check_in_dictionary)
-  split_words = "/".join(fmm_dictionary_matches)
-  print ("FMM: " + split_words)
+  fmm_split_words = "/".join(fmm_dictionary_matches)
 
   # REVERSE MAXIMUM MATCHING
   rmm_dictionary_matches = []
-  rmm_word_to_check_in_dictionary = user_sentence
+  rmm_word_to_check_in_dictionary = sentence
   while rmm_word_to_check_in_dictionary:
     word = rmm_greedy_check(rmm_word_to_check_in_dictionary, word_dictionary)
     rmm_dictionary_matches.append(word)
     rmm_word_to_check_in_dictionary = remove_last_word(word, rmm_word_to_check_in_dictionary)
   reversed_rmm_dictionary_matches = rmm_dictionary_matches[::-1]
-  split_words = "/".join(reversed_rmm_dictionary_matches)
-  print ("RMM: " + split_words)
+  rmm_split_words = "/".join(reversed_rmm_dictionary_matches)
 
   # 如果FMM与RMM的结果不一样，句子有歧义。执行vote_on_sentence()函数，用smallest cost（最小代价）选FMM或RMM的接过。
+  cost_evaluated_words = rmm_split_words
   if not fmm_dictionary_matches == reversed_rmm_dictionary_matches:
     vote = vote_on_sentence(fmm_dictionary_matches, reversed_rmm_dictionary_matches)
-    print("MINIMAL COST VOTE: " + "/".join(vote))
+    cost_evaluated_words = "/".join(vote)
+
+  return fmm_split_words, rmm_split_words, cost_evaluated_words
+
+
+def main(word_dictionary):
+  user_sentence = input("\n输入一个汉语句子：\n")
+  if user_sentence == '1':
+    sys.exit()
+  fmm_split, rmm_split, cost_evaluated_split = segment_sentence(user_sentence, word_dictionary)
+  print(fmm_split, rmm_split, cost_evaluated_split)
 
 
 if __name__ == "__main__":
+  word_dictionary = createDictionary("./data/dic-ce.txt")
   while True:
-    main()
+    main(word_dictionary)
